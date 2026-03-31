@@ -67,9 +67,9 @@ python3 gemini_cache_test.py --project jhlee1 --model gemini-3.1-flash-lite-prev
 
 ---
 
-## ✅ 검증 및 대조 계획 (Verification Plan)
+## 3. 검증 데이터 시트 (요약)
 
-전 항목 무결한 데이터셋을 한 번만 모아서 공유해 주시면 최종 리포트 마감합니다.
+단일 실행에서 수집되는 항목 취합 데이터.
 
 1.  **Cold Large**: _____ 초
 2.  **Warm Large**: _____ 초
