@@ -56,10 +56,10 @@ async def run_benchmark(project, model, mode, concurrency):
     # 모드에 따른 HTTP 클라이언트 커스텀
     if mode == "custom":
         print("🔧 [커스텀 모드] Limits (Max 1000 / Keepalive 500) 확장 적용")
-        custom_limits = httpx.Limits(max_connections=1000, max_keepalive_connections=500)
-        my_http_client = httpx.AsyncClient(limits=custom_limits, timeout=httpx.Timeout(60.0))
+        custom_limits = httpx.Limits(max_connections=1000, max_keepalive_connections=500)  # 풀링 확장
+        my_http_client = httpx.AsyncClient(limits=custom_limits, timeout=float(60.0))      # 세션 오버라이드용 클라이언트 (60초 타입아웃)
         
-        # 🧪 멍키 패치: 최상위 Client는 http_client 인자를 받지 않으므로 내부 BaseApiClient의 클라이언트를 강제 교체
+        # [커넥션 풀 오버라이드] 대규모 동시성 처리를 위한 내부 비동기 클라이언트 런타임 갱신
         client = genai.Client(vertexai=True, project=project, location="global")
         client.aio._api_client._async_httpx_client = my_http_client
     else:
