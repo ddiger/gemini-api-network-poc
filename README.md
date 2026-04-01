@@ -29,6 +29,13 @@
 > [!TIP]
 > **성능 인사이트**: Context Caching 을 통해 물리적 전송 시간(L4 병목)을 아예 `0` 으로 지워버림으로써, 순수 모델 서버 엔진의 추론 시간(Inference Latency) 단 10초만 남길 수 있습니다!
 
+### 🔬 ④ 대규모 동시 요청 최적화: SDK 연결 한도 가중치 수정 (Async Concurrency 200 슛)
+
+| 모드 | 동시성(Concurrency) | 총 소요 시간 (Wall Time) | P50 (중앙값) | 성공률 |
+| :--- | :--- | :--- | :--- | :--- |
+| **기본군 (base)** | 200 | 30.60s | 2.80s | 50% (100건 타임아웃) |
+| **실험군 (custom)** | 200 | **5.79s** | **3.02s** | **100% (200건 완주 가속!) 🚀** |
+
 ---
 
 ## 🛠️ 2. 사용 및 실행 가이드
@@ -56,6 +63,11 @@ python3 gemini_bbr_test.py --project <YOUR_PROJECT_ID>
 python3 gemini_cache_test.py --project <YOUR_PROJECT_ID>
 ```
 
+#### 시나리오 4: 대규모 동시 요청 (Limits 확장)
+```bash
+python3 gemini_connection_limits_test.py --project <YOUR_PROJECT_ID> --mode custom --concurrency 200
+```
+
 ---
 
 ## 🏁 3. 최종 엔지니어링 제안 (Conclusion)
@@ -63,6 +75,7 @@ python3 gemini_cache_test.py --project <YOUR_PROJECT_ID>
 1.  **개발자 가이드**: `genai.Client()` 객체를 매 슛마다 생성하지 말고, **전역 싱글톤(Singleton)** 으로 재사용하여 HTTP 커넥션 풀을 타게 할 것 (응답 속도 25% 가속).
 2.  **DevOps & 인프라 가이드**: 구글 버텍스 API 에 접하는 인터넷 게이트웨이 및 VM 노드 OS 커널에 **TCP BBR 적용** 및 Google PSC(Private Service Connect) 개설을 추진할 것.
 3.  **데이터 아키텍처 가이드**: 10MB 이상의 자주 묻는 거대 덤프 기사는 네트워크 전처리 자체를 지워버리는 **컨텍스트 캐싱(Context Caching)** 을 디자인 아키텍처로 필수 도입할 것.
+4.  **대규모 부하 분배 아키텍처**: 초당 수백 건의 비동기 트래픽을 처리하는 AI 미들웨어라면, SDK의 기본 연결 한계(`httpx` Max 100)를 수동으로 패치하여 **연결 풀 도달 풀링(Max 1000 / Keepalive 500)** 한계 확장을 필수 디자인 패턴으로 구축할 것.
 
 ---
 

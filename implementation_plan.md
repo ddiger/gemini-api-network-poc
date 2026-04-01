@@ -67,6 +67,20 @@ python3 gemini_cache_test.py --project jhlee1 --model gemini-3.1-flash-lite-prev
 
 ---
 
+### ▶️ Step 4: [시나리오 4] 대규모 동시 요청 (Limits) 측정
+
+하부 `httpx` 연결 한도 확장(Max 1000) 설정을 실측하여 무한 정체(Hang) 및 타임아웃을 방지합니다.
+
+```bash
+python3 gemini_connection_limits_test.py --project jhlee1 --mode custom --concurrency 200
+```
+*   **기록할 대상**:
+    - `Success Rate`: _____ / 200 (100% 여야 함)
+    - `P50 TTFT`: _____ 초
+    - `P95 TTFT`: _____ 초
+
+---
+
 ## 3. 검증 데이터 시트 (요약)
 
 단일 실행에서 수집되는 항목 취합 데이터.
@@ -76,3 +90,5 @@ python3 gemini_cache_test.py --project jhlee1 --model gemini-3.1-flash-lite-prev
 3.  **Context Caching**: _____ 초
 4.  **Cubic + 유실 1%**: _____ 초
 5.  **BBR + 유실 1%**: _____ 초
+6.  **동시성 200 (base)**: 50% 실패 (Queue 드롭) ❌
+7.  **동시성 200 (custom)**: 100% 성공 (가속 완주) 🚀

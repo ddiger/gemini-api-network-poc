@@ -13,7 +13,7 @@ def measure_ttft(client, model_name, label, prompt):
     try:
         response = client.models.generate_content_stream(
             model=model_name,
-            contents=[prompt, TEXT_3MB],
+            contents=[prompt, TEXT_10MB],
             config=types.GenerateContentConfig(
                 temperature=0.7,
             )
