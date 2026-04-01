@@ -72,10 +72,10 @@ python3 gemini_connection_limits_test.py --project <YOUR_PROJECT_ID> --mode cust
 
 ## 🏁 3. 최종 엔지니어링 제안 (Conclusion)
 
-1.  **개발자 가이드**: `genai.Client()` 객체를 매 슛마다 생성하지 말고, **전역 싱글톤(Singleton)** 으로 재사용하여 HTTP 커넥션 풀을 타게 할 것 (응답 속도 25% 가속).
-2.  **DevOps & 인프라 가이드**: 구글 버텍스 API 에 접하는 인터넷 게이트웨이 및 VM 노드 OS 커널에 **TCP BBR 적용** 및 Google PSC(Private Service Connect) 개설을 추진할 것.
-3.  **데이터 아키텍처 가이드**: 10MB 이상의 자주 묻는 거대 덤프 기사는 네트워크 전처리 자체를 지워버리는 **컨텍스트 캐싱(Context Caching)** 을 디자인 아키텍처로 필수 도입할 것.
-4.  **대규모 부하 분배 아키텍처**: 초당 수백 건의 비동기 트래픽을 처리하는 AI 미들웨어라면, SDK의 기본 연결 한계(`httpx` Max 100)를 수동으로 패치하여 **연결 풀 도달 풀링(Max 1000 / Keepalive 500)** 한계 확장을 필수 디자인 패턴으로 구축할 것.
+1.  **Client 가이드**: `genai.Client()` 객체를 매 슛마다 생성하지 말고, **전역 싱글톤(Singleton)** 으로 재사용하여 HTTP 커넥션 풀을 타게 할 것 (응답 속도 25% 가속).
+2.  **DevOps & 인프라 가이드**: 노드 OS 커널에 **TCP BBR 적용** 및 Google Interconnect 및 PSC(Private Service Connect) 과 같은 비공개 연결 환경을 구축할 것.
+3.  **데이터 아키텍처 가이드**: 10MB 이상의 자주 묻는 용량이 큰 데이터는 클라이언트의 원본 프롬프트 전송 단계를 제거하고 재사용할 수 있는 **컨텍스트 캐싱(Context Caching)** 을 디자인 아키텍처 고려.
+4.  **대규모 부하 분배 아키텍처**: 초당 수백 건의 비동기 트래픽을 처리하는 Large Enterprise 환경이라면, SDK의 기본 연결 한계(`httpx` Max 100)를 수동으로 패치하여 **연결 풀 도달 풀링(예 - Max 1000 / Keepalive 500)** 한계 확장을 디자인 패턴으로 고려할 것.
 
 ---
 
